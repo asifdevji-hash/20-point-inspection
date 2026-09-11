@@ -49,10 +49,13 @@ function initialItemState() {
 const BLANK_SITE_INFO = {
   siteName: "",
   siteAddress: "",
+  clientContactName: "",
   clientContactEmail: "",
   clientContactPhone: "",
+  servicePmName: "",
   servicePmEmail: "",
   servicePmPhone: "",
+  techOnsiteName: "",
   techOnsiteEmail: "",
   techOnsitePhone: "",
   generalNotes: "",
@@ -131,10 +134,13 @@ export default function InspectionForm({ technicianName }) {
         body: JSON.stringify({
           site_name: siteInfo.siteName,
           site_address: siteInfo.siteAddress,
+          client_contact_name: siteInfo.clientContactName,
           client_contact_email: siteInfo.clientContactEmail,
           client_contact_phone: siteInfo.clientContactPhone,
+          service_pm_name: siteInfo.servicePmName,
           service_pm_email: siteInfo.servicePmEmail,
           service_pm_phone: siteInfo.servicePmPhone,
+          tech_onsite_name: siteInfo.techOnsiteName,
           tech_onsite_email: siteInfo.techOnsiteEmail,
           tech_onsite_phone: siteInfo.techOnsitePhone,
           general_notes: siteInfo.generalNotes,
@@ -202,6 +208,14 @@ export default function InspectionForm({ technicianName }) {
           />
 
           <div className="contact-group-label">Client / Site Contact Info</div>
+          <label htmlFor="client-name">Name</label>
+          <input
+            id="client-name"
+            type="text"
+            value={siteInfo.clientContactName}
+            onChange={(e) => setField("clientContactName", e.target.value)}
+            placeholder="Full name"
+          />
           <div className="field-row">
             <div>
               <label htmlFor="client-email">Email</label>
@@ -226,6 +240,14 @@ export default function InspectionForm({ technicianName }) {
           </div>
 
           <div className="contact-group-label">Prospect Solar Service PM</div>
+          <label htmlFor="pm-name">Name</label>
+          <input
+            id="pm-name"
+            type="text"
+            value={siteInfo.servicePmName}
+            onChange={(e) => setField("servicePmName", e.target.value)}
+            placeholder="Full name"
+          />
           <div className="field-row">
             <div>
               <label htmlFor="pm-email">Email</label>
@@ -250,6 +272,14 @@ export default function InspectionForm({ technicianName }) {
           </div>
 
           <div className="contact-group-label">Prospect Solar Tech Onsite</div>
+          <label htmlFor="tech-name">Name</label>
+          <input
+            id="tech-name"
+            type="text"
+            value={siteInfo.techOnsiteName}
+            onChange={(e) => setField("techOnsiteName", e.target.value)}
+            placeholder="Full name"
+          />
           <div className="field-row">
             <div>
               <label htmlFor="tech-email">Email</label>

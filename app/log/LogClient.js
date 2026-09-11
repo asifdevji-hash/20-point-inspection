@@ -38,26 +38,44 @@ function InspectionRow({ inspection }) {
               <strong>Site address:</strong> {inspection.site_address}
             </p>
           )}
-          {(inspection.client_contact_email || inspection.client_contact_phone) && (
+          {(inspection.client_contact_name ||
+            inspection.client_contact_email ||
+            inspection.client_contact_phone) && (
             <p>
               <strong>Client / Site Contact:</strong>{" "}
-              {[inspection.client_contact_email, inspection.client_contact_phone]
+              {[
+                inspection.client_contact_name,
+                inspection.client_contact_email,
+                inspection.client_contact_phone,
+              ]
                 .filter(Boolean)
                 .join(" · ")}
             </p>
           )}
-          {(inspection.service_pm_email || inspection.service_pm_phone) && (
+          {(inspection.service_pm_name ||
+            inspection.service_pm_email ||
+            inspection.service_pm_phone) && (
             <p>
               <strong>Prospect Solar Service PM:</strong>{" "}
-              {[inspection.service_pm_email, inspection.service_pm_phone]
+              {[
+                inspection.service_pm_name,
+                inspection.service_pm_email,
+                inspection.service_pm_phone,
+              ]
                 .filter(Boolean)
                 .join(" · ")}
             </p>
           )}
-          {(inspection.tech_onsite_email || inspection.tech_onsite_phone) && (
+          {(inspection.tech_onsite_name ||
+            inspection.tech_onsite_email ||
+            inspection.tech_onsite_phone) && (
             <p>
               <strong>Prospect Solar Tech Onsite:</strong>{" "}
-              {[inspection.tech_onsite_email, inspection.tech_onsite_phone]
+              {[
+                inspection.tech_onsite_name,
+                inspection.tech_onsite_email,
+                inspection.tech_onsite_phone,
+              ]
                 .filter(Boolean)
                 .join(" · ")}
             </p>

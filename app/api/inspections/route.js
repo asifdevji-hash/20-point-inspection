@@ -17,9 +17,9 @@ export async function GET() {
     const pool = getPool();
     const { rows } = await pool.query(
       `SELECT id, created_at, technician, site_name, site_address,
-              client_contact_email, client_contact_phone,
-              service_pm_email, service_pm_phone,
-              tech_onsite_email, tech_onsite_phone,
+              client_contact_name, client_contact_email, client_contact_phone,
+              service_pm_name, service_pm_email, service_pm_phone,
+              tech_onsite_name, tech_onsite_email, tech_onsite_phone,
               general_notes, items
        FROM inspections ORDER BY created_at DESC LIMIT 200`
     );
@@ -86,26 +86,29 @@ export async function POST(request) {
     const { rows } = await pool.query(
       `INSERT INTO inspections (
          technician, technician_id, site_name, site_address,
-         client_contact_email, client_contact_phone,
-         service_pm_email, service_pm_phone,
-         tech_onsite_email, tech_onsite_phone,
+         client_contact_name, client_contact_email, client_contact_phone,
+         service_pm_name, service_pm_email, service_pm_phone,
+         tech_onsite_name, tech_onsite_email, tech_onsite_phone,
          general_notes, items
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
        RETURNING id, created_at, technician, site_name, site_address,
-                 client_contact_email, client_contact_phone,
-                 service_pm_email, service_pm_phone,
-                 tech_onsite_email, tech_onsite_phone,
+                 client_contact_name, client_contact_email, client_contact_phone,
+                 service_pm_name, service_pm_email, service_pm_phone,
+                 tech_onsite_name, tech_onsite_email, tech_onsite_phone,
                  general_notes, items`,
       [
         technician.name,
         technician.id,
         String(body.site_name).trim(),
         optionalText(body.site_address),
+        optionalText(body.client_contact_name),
         optionalText(body.client_contact_email),
         optionalText(body.client_contact_phone),
+        optionalText(body.service_pm_name),
         optionalText(body.service_pm_email),
         optionalText(body.service_pm_phone),
+        optionalText(body.tech_onsite_name),
         optionalText(body.tech_onsite_email),
         optionalText(body.tech_onsite_phone),
         optionalText(body.general_notes),
