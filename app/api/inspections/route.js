@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
-import { getPool, ensureSchema } from "../../../lib/db";
+import { cookies } from "next/headers";
+import { getPool, ensureSchema, getActiveTechnician } from "../../../lib/db";
 import { ALL_ITEMS, STATUS_OPTIONS } from "../../../lib/items";
+import { readSession } from "../../../lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const session = readSession(cookies());
+  if (!session || !(await getActiveTechnician(session.id))) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   try {
     await ensureSchema();
     const pool = getPool();
@@ -23,8 +30,6 @@ export async function GET() {
 
 function validate(body) {
   if (!body || typeof body !== "object") return "Invalid request body";
-  if (!body.technician || !String(body.technician).trim())
-    return "Technician name is required";
   if (!body.site_name || !String(body.site_name).trim())
     return "Site name is required";
   if (!Array.isArray(body.items) || body.items.length === 0)
@@ -41,6 +46,15 @@ function validate(body) {
 }
 
 export async function POST(request) {
+  // Technician identity comes from the verified, still-active session,
+  // never from the request body — otherwise anyone could submit as someone
+  // else, or a deactivated technician's old cookie would keep working.
+  const session = readSession(cookies());
+  const technician = session && (await getActiveTechnician(session.id));
+  if (!technician) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   let body;
   try {
     body = await request.json();
@@ -57,11 +71,12 @@ export async function POST(request) {
     await ensureSchema();
     const pool = getPool();
     const { rows } = await pool.query(
-      `INSERT INTO inspections (technician, site_name, general_notes, items)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO inspections (technician, technician_id, site_name, general_notes, items)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING id, created_at, technician, site_name, general_notes, items`,
       [
-        String(body.technician).trim(),
+        technician.name,
+        technician.id,
         String(body.site_name).trim(),
         body.general_notes ? String(body.general_notes).trim() : null,
         JSON.stringify(body.items),
