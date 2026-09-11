@@ -46,14 +46,29 @@ function initialItemState() {
   return state;
 }
 
+const BLANK_SITE_INFO = {
+  siteName: "",
+  siteAddress: "",
+  clientContactEmail: "",
+  clientContactPhone: "",
+  servicePmEmail: "",
+  servicePmPhone: "",
+  techOnsiteEmail: "",
+  techOnsitePhone: "",
+  generalNotes: "",
+};
+
 export default function InspectionForm({ technicianName }) {
   const router = useRouter();
-  const [siteName, setSiteName] = useState("");
-  const [generalNotes, setGeneralNotes] = useState("");
+  const [siteInfo, setSiteInfo] = useState(BLANK_SITE_INFO);
   const [itemState, setItemState] = useState(initialItemState);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  function setField(field, value) {
+    setSiteInfo((prev) => ({ ...prev, [field]: value }));
+  }
 
   function setStatus(id, status) {
     setItemState((prev) => ({
@@ -81,8 +96,7 @@ export default function InspectionForm({ technicianName }) {
   }
 
   function resetForm() {
-    setSiteName("");
-    setGeneralNotes("");
+    setSiteInfo(BLANK_SITE_INFO);
     setItemState(initialItemState());
   }
 
@@ -97,7 +111,7 @@ export default function InspectionForm({ technicianName }) {
     setError("");
     setSuccess(false);
 
-    if (!siteName.trim()) {
+    if (!siteInfo.siteName.trim()) {
       setError("Site name is required.");
       return;
     }
@@ -115,8 +129,15 @@ export default function InspectionForm({ technicianName }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          site_name: siteName,
-          general_notes: generalNotes,
+          site_name: siteInfo.siteName,
+          site_address: siteInfo.siteAddress,
+          client_contact_email: siteInfo.clientContactEmail,
+          client_contact_phone: siteInfo.clientContactPhone,
+          service_pm_email: siteInfo.servicePmEmail,
+          service_pm_phone: siteInfo.servicePmPhone,
+          tech_onsite_email: siteInfo.techOnsiteEmail,
+          tech_onsite_phone: siteInfo.techOnsitePhone,
+          general_notes: siteInfo.generalNotes,
           items,
         }),
       });
@@ -160,20 +181,103 @@ export default function InspectionForm({ technicianName }) {
 
       <form onSubmit={handleSubmit}>
         <div className="card">
+          <div className="section-title" style={{ marginTop: 0 }}>Site Information</div>
+
           <label htmlFor="site">Site name</label>
           <input
             id="site"
             type="text"
-            value={siteName}
-            onChange={(e) => setSiteName(e.target.value)}
+            value={siteInfo.siteName}
+            onChange={(e) => setField("siteName", e.target.value)}
             placeholder="Site or customer name"
           />
+
+          <label htmlFor="site-address">Service site address</label>
+          <input
+            id="site-address"
+            type="text"
+            value={siteInfo.siteAddress}
+            onChange={(e) => setField("siteAddress", e.target.value)}
+            placeholder="Street, city, state, zip"
+          />
+
+          <div className="contact-group-label">Client / Site Contact Info</div>
+          <div className="field-row">
+            <div>
+              <label htmlFor="client-email">Email</label>
+              <input
+                id="client-email"
+                type="email"
+                value={siteInfo.clientContactEmail}
+                onChange={(e) => setField("clientContactEmail", e.target.value)}
+                placeholder="client@example.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="client-phone">Phone</label>
+              <input
+                id="client-phone"
+                type="tel"
+                value={siteInfo.clientContactPhone}
+                onChange={(e) => setField("clientContactPhone", e.target.value)}
+                placeholder="(555) 555-5555"
+              />
+            </div>
+          </div>
+
+          <div className="contact-group-label">Prospect Solar Service PM</div>
+          <div className="field-row">
+            <div>
+              <label htmlFor="pm-email">Email</label>
+              <input
+                id="pm-email"
+                type="email"
+                value={siteInfo.servicePmEmail}
+                onChange={(e) => setField("servicePmEmail", e.target.value)}
+                placeholder="pm@prospectsolar.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="pm-phone">Phone</label>
+              <input
+                id="pm-phone"
+                type="tel"
+                value={siteInfo.servicePmPhone}
+                onChange={(e) => setField("servicePmPhone", e.target.value)}
+                placeholder="(555) 555-5555"
+              />
+            </div>
+          </div>
+
+          <div className="contact-group-label">Prospect Solar Tech Onsite</div>
+          <div className="field-row">
+            <div>
+              <label htmlFor="tech-email">Email</label>
+              <input
+                id="tech-email"
+                type="email"
+                value={siteInfo.techOnsiteEmail}
+                onChange={(e) => setField("techOnsiteEmail", e.target.value)}
+                placeholder="tech@prospectsolar.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="tech-phone">Phone</label>
+              <input
+                id="tech-phone"
+                type="tel"
+                value={siteInfo.techOnsitePhone}
+                onChange={(e) => setField("techOnsitePhone", e.target.value)}
+                placeholder="(555) 555-5555"
+              />
+            </div>
+          </div>
 
           <label htmlFor="general-notes">General notes (optional)</label>
           <textarea
             id="general-notes"
-            value={generalNotes}
-            onChange={(e) => setGeneralNotes(e.target.value)}
+            value={siteInfo.generalNotes}
+            onChange={(e) => setField("generalNotes", e.target.value)}
             placeholder="Anything worth noting about the site or visit overall"
           />
         </div>

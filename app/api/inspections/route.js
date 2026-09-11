@@ -16,7 +16,12 @@ export async function GET() {
     await ensureSchema();
     const pool = getPool();
     const { rows } = await pool.query(
-      "SELECT id, created_at, technician, site_name, general_notes, items FROM inspections ORDER BY created_at DESC LIMIT 200"
+      `SELECT id, created_at, technician, site_name, site_address,
+              client_contact_email, client_contact_phone,
+              service_pm_email, service_pm_phone,
+              tech_onsite_email, tech_onsite_phone,
+              general_notes, items
+       FROM inspections ORDER BY created_at DESC LIMIT 200`
     );
     return NextResponse.json({ inspections: rows });
   } catch (err) {
@@ -26,6 +31,14 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+// Optional free-text fields: trimmed, empty string becomes null so the DB
+// and the log view can tell "not provided" apart from "provided but blank".
+function optionalText(value) {
+  if (value === undefined || value === null) return null;
+  const trimmed = String(value).trim();
+  return trimmed ? trimmed : null;
 }
 
 function validate(body) {
@@ -71,14 +84,31 @@ export async function POST(request) {
     await ensureSchema();
     const pool = getPool();
     const { rows } = await pool.query(
-      `INSERT INTO inspections (technician, technician_id, site_name, general_notes, items)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, created_at, technician, site_name, general_notes, items`,
+      `INSERT INTO inspections (
+         technician, technician_id, site_name, site_address,
+         client_contact_email, client_contact_phone,
+         service_pm_email, service_pm_phone,
+         tech_onsite_email, tech_onsite_phone,
+         general_notes, items
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       RETURNING id, created_at, technician, site_name, site_address,
+                 client_contact_email, client_contact_phone,
+                 service_pm_email, service_pm_phone,
+                 tech_onsite_email, tech_onsite_phone,
+                 general_notes, items`,
       [
         technician.name,
         technician.id,
         String(body.site_name).trim(),
-        body.general_notes ? String(body.general_notes).trim() : null,
+        optionalText(body.site_address),
+        optionalText(body.client_contact_email),
+        optionalText(body.client_contact_phone),
+        optionalText(body.service_pm_email),
+        optionalText(body.service_pm_phone),
+        optionalText(body.tech_onsite_email),
+        optionalText(body.tech_onsite_phone),
+        optionalText(body.general_notes),
         JSON.stringify(body.items),
       ]
     );

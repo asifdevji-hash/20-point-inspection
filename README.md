@@ -2,8 +2,12 @@
 
 A mobile-friendly fillable version of the "Base [2026] 20-Point Inspection"
 checklist, for field technicians to fill out on a phone/tablet on site.
-Each of the 20 checklist items gets a Pass / Flag / N-A status, an optional
-note, and an optional photo (compressed in the browser before it's saved).
+The top "Site Information" section captures the site name, service site
+address, and contact info (email + phone) for the client/site contact, the
+Prospect Solar Service PM, and the Prospect Solar Tech Onsite — all
+optional except site name. Below that, each of the 20 checklist items gets
+a Pass / Flag / N-A status, an optional note, and an optional photo
+(compressed in the browser before it's saved).
 
 - `/` — the inspection form (requires technician login)
 - `/log` — a shared log of every submission (expandable rows, photos inline)
